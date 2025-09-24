@@ -3,6 +3,116 @@ import torch.nn as nn
 import torch.nn.functional as F
 import random
 
+
+class BPETokenizer:
+    def __init__(self, vocab_size: int = 10000):
+        self.vocab_size = vocab_size
+        self.word_freqs = Counter()
+        self.vocab = {}
+        self.merges = []
+        self.special_tokens = ['<pad>', '<unk>', '<sos>', '<eos>']
+
+    def _get_stats(self, vocab):
+        pairs = defaultdict(int)
+        for word, freq in vocab.items():
+            symbols = word.split()
+            for i in range(len(symbols) - 1):
+                pairs[symbols[i], symbols[i + 1]] += freq
+        return pairs
+
+    def _merge_vocab(self, pair, vocab):
+        new_vocab = {}
+        bigram = re.escape(' '.join(pair))
+        p = re.compile(r'(?<!\S)' + bigram + r'(?!\S)')
+
+        for word in vocab:
+            new_word = p.sub(''.join(pair), word)
+            new_vocab[new_word] = vocab[word]
+        return new_vocab
+
+    def train(self, texts):
+        print("Training BPE tokenizer...")
+
+        for text in texts:
+            words = text.split()
+            for word in words:
+                self.word_freqs[word] += 1
+
+        vocab = {}
+        for word, freq in self.word_freqs.items():
+            vocab[' '.join(list(word)) + ' </w>'] = freq
+
+        for token in self.special_tokens:
+            vocab[token] = 1
+
+        num_merges = self.vocab_size - len(self.special_tokens)
+
+        for i in range(num_merges):
+            pairs = self._get_stats(vocab)
+            if not pairs:
+                break
+
+            best_pair = max(pairs, key=pairs.get)
+            vocab = self._merge_vocab(best_pair, vocab)
+            self.merges.append(best_pair)
+
+            if (i + 1) % 1000 == 0:
+                print(f"Merged {i + 1}/{num_merges} pairs")
+
+        self.vocab = {}
+        for i, token in enumerate(self.special_tokens):
+            self.vocab[token] = i
+
+        for word in vocab:
+            if word not in self.vocab:
+                self.vocab[word] = len(self.vocab)
+
+        print(f"BPE training completed. Vocabulary size: {len(self.vocab)}")
+
+    def encode(self, text):
+        # Simplified encoding for compatibility
+        tokens = []
+        words = text.split()
+        for word in words:
+            if word in self.vocab:
+                tokens.append(self.vocab[word])
+            else:
+                tokens.append(self.vocab['<unk>'])
+        return tokens
+
+    def decode(self, token_ids):
+        id_to_token = {v: k for k, v in self.vocab.items()}
+        tokens = []
+        for token_id in token_ids:
+            if token_id in id_to_token:
+                token = id_to_token[token_id]
+                if token not in self.special_tokens:
+                    tokens.append(token)
+
+        text = ' '.join(tokens)
+        text = text.replace('</w>', ' ')
+        text = re.sub(r'\s+', ' ', text)
+        return text.strip()
+
+    def get_vocab_size(self):
+        return len(self.vocab)
+
+def create_tokenizers(train_pairs, src_vocab_size=8000, tgt_vocab_size=8000):
+    src_texts = [pair[0] for pair in train_pairs]
+    tgt_texts = [pair[1] for pair in train_pairs]
+
+    src_tokenizer = BPETokenizer(vocab_size=src_vocab_size)
+    tgt_tokenizer = BPETokenizer(vocab_size=tgt_vocab_size)
+
+    print("Training source (Urdu) tokenizer...")
+    src_tokenizer.train(src_texts)
+
+    print("Training target (Roman Urdu) tokenizer...")
+    tgt_tokenizer.train(tgt_texts)
+
+    return src_tokenizer, tgt_tokenizer
+
+
 class BiLSTMEncoder(nn.Module):
     def __init__(self, vocab_size, embed_dim, hidden_dim, num_layers=2, dropout=0.3):
         super(BiLSTMEncoder, self).__init__()
