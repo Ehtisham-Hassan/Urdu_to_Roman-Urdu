@@ -1,0 +1,11 @@
+torch
+torchtext
+nltk
+sacrebleu
+editdistance
+streamlit
+matplotlib
+seaborn
+tqdm
+pandas
+numpy
