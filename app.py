@@ -4,6 +4,8 @@ import pickle
 import os
 from huggingface_hub import hf_hub_download
 from model import Seq2SeqModel, BPETokenizer
+import shutil
+
 
 # ==============================
 # Hugging Face Repo Info
@@ -23,7 +25,8 @@ for filename, path_in_repo in files_to_download.items():
     if not os.path.exists(filename):
         st.write(f"📥 Downloading {filename} from Hugging Face...")
         local_path = hf_hub_download(repo_id=REPO_ID, filename=path_in_repo)
-        os.rename(local_path, filename)
+        if not os.path.exists(filename):
+            shutil.copy(local_path, filename)
 
 # ==============================
 # Load tokenizers
