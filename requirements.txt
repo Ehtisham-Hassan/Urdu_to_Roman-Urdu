@@ -10,3 +10,7 @@ tqdm
 pandas
 numpy
 gdown
+pickle
+os
+huggingface_hub
+hf_hub_download
