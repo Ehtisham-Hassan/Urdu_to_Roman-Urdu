@@ -2,36 +2,28 @@ import streamlit as st
 import torch
 import pickle
 import os
-import gdown
+from huggingface_hub import hf_hub_download
 from model import Seq2SeqModel
 
 # ==============================
-# Google Drive File IDs
+# Hugging Face Repo Info
 # ==============================
-# Replace these with actual file IDs from your Drive folder
-MODEL_FILE_ID = "1aFHD_0Vmr8imoL6Rg_RIdtCee0yQdopG"  # best_model.pth
-SRC_TOKENIZER_FILE_ID = "1AO1Tzen7N82ScjFoCVrWb-717eGqXUB3"  # src_tokenizer.pkl
-TGT_TOKENIZER_FILE_ID = "1gt3VRG58U8dct3-QROA9OFeKIF5Pz6Kr"  # tgt_tokenizer.pkl
+REPO_ID = "ehtisham-hassan/urdu_to_roman-urdu"  # change to your repo name
 
 files_to_download = {
-    "best_model.pth": MODEL_FILE_ID,
-    "src_tokenizer.pkl": SRC_TOKENIZER_FILE_ID,
-    "tgt_tokenizer.pkl": TGT_TOKENIZER_FILE_ID,
+    "best_model.pth": "final_model_weights.pth",
+    "src_tokenizer.pkl": "src_tokenizer.pkl",
+    "tgt_tokenizer.pkl": "tgt_tokenizer.pkl",
 }
 
-
 # ==============================
-# Download files if missing
+# Download files (cached locally by HF Hub)
 # ==============================
-for filename, file_id in files_to_download.items():
+for filename, path_in_repo in files_to_download.items():
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?id={file_id}"
-        st.write(f"📥 Downloading {filename} from Google Drive...")
-        gdown.download(url, filename, quiet=False)
-        if os.path.exists(filename):
-            with open(filename, "rb") as f:
-                head = f.read(100)
-                st.write(f"File head for {filename}:", head[:50])
+        st.write(f"📥 Downloading {filename} from Hugging Face...")
+        local_path = hf_hub_download(repo_id=REPO_ID, filename=path_in_repo)
+        os.rename(local_path, filename)
 
 # ==============================
 # Load tokenizers
