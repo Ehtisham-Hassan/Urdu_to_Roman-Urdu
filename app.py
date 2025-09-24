@@ -3,7 +3,7 @@ import torch
 import pickle
 import os
 from huggingface_hub import hf_hub_download
-from model import Seq2SeqModel
+from model import Seq2SeqModel, BPETokenizer
 
 # ==============================
 # Hugging Face Repo Info
