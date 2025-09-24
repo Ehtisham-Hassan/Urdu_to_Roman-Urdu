@@ -28,10 +28,37 @@ for filename, path_in_repo in files_to_download.items():
 # ==============================
 # Load tokenizers
 # ==============================
-with open("src_tokenizer.pkl", "rb") as f:
+from huggingface_hub import hf_hub_download
+
+# This will download the exact binary file (not HTML!)
+src_tokenizer_path = hf_hub_download(
+    repo_id=REPO_ID,
+    filename="src_tokenizer.pkl"
+)
+
+tgt_tokenizer_path = hf_hub_download(
+    repo_id=REPO_ID,
+    filename="tgt_tokenizer.pkl"
+)
+
+model_path = hf_hub_download(
+    repo_id=REPO_ID,
+    filename="final_model_weights.pth"
+)
+
+# Now safely load
+import pickle, torch
+with open(src_tokenizer_path, "rb") as f:
     src_tokenizer = pickle.load(f)
-with open("tgt_tokenizer.pkl", "rb") as f:
+with open(tgt_tokenizer_path, "rb") as f:
     tgt_tokenizer = pickle.load(f)
+
+# model.load_state_dict(torch.load(model_path, map_location=device))
+
+# with open("src_tokenizer.pkl", "rb") as f:
+#     src_tokenizer = pickle.load(f)
+# with open("tgt_tokenizer.pkl", "rb") as f:
+#     tgt_tokenizer = pickle.load(f)
 
 # Device setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
