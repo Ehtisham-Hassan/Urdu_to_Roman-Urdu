@@ -28,6 +28,10 @@ for filename, file_id in files_to_download.items():
         url = f"https://drive.google.com/uc?id={file_id}"
         st.write(f"📥 Downloading {filename} from Google Drive...")
         gdown.download(url, filename, quiet=False)
+        if os.path.exists(filename):
+            with open(filename, "rb") as f:
+            head = f.read(100)
+            st.write(f"File head for {filename}:", head[:50])
 
 # ==============================
 # Load tokenizers
