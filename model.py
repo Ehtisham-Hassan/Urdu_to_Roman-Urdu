@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import random
-
+import re
+from collections import Counter, defaultdict
 
 class BPETokenizer:
     def __init__(self, vocab_size: int = 10000):
