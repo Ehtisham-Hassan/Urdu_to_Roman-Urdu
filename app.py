@@ -30,8 +30,8 @@ for filename, file_id in files_to_download.items():
         gdown.download(url, filename, quiet=False)
         if os.path.exists(filename):
             with open(filename, "rb") as f:
-            head = f.read(100)
-            st.write(f"File head for {filename}:", head[:50])
+                head = f.read(100)
+                st.write(f"File head for {filename}:", head[:50])
 
 # ==============================
 # Load tokenizers
