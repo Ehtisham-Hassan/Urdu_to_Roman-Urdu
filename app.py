@@ -9,9 +9,9 @@ from model import Seq2SeqModel
 # Google Drive File IDs
 # ==============================
 # Replace these with actual file IDs from your Drive folder
-MODEL_FILE_ID = "YOUR_MODEL_FILE_ID"  # best_model.pth
-SRC_TOKENIZER_FILE_ID = "YOUR_SRC_FILE_ID"  # src_tokenizer.pkl
-TGT_TOKENIZER_FILE_ID = "YOUR_TGT_FILE_ID"  # tgt_tokenizer.pkl
+MODEL_FILE_ID = "https://drive.google.com/file/d/1gt3VRG58U8dct3-QROA9OFeKIF5Pz6Kr/view"  # best_model.pth
+SRC_TOKENIZER_FILE_ID = "https://drive.google.com/file/d/1AO1Tzen7N82ScjFoCVrWb-717eGqXUB3/view?usp=drive_link"  # src_tokenizer.pkl
+TGT_TOKENIZER_FILE_ID = "https://drive.google.com/file/d/1aFHD_0Vmr8imoL6Rg_RIdtCee0yQdopG/view"  # tgt_tokenizer.pkl
 
 files_to_download = {
     "best_model.pth": MODEL_FILE_ID,
@@ -24,7 +24,7 @@ files_to_download = {
 # ==============================
 for filename, file_id in files_to_download.items():
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?id={file_id}"
+        url = f"{file_id}"
         st.write(f"📥 Downloading {filename} from Google Drive...")
         gdown.download(url, filename, quiet=False)
 
