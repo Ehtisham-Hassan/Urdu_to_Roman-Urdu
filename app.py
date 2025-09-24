@@ -25,7 +25,7 @@ files_to_download = {
 # ==============================
 for filename, file_id in files_to_download.items():
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/file/d/{file_id}/view?usp=sharing"
+        url = f"https://drive.google.com/uc?id={file_id}"
         st.write(f"📥 Downloading {filename} from Google Drive...")
         gdown.download(url, filename, quiet=False)
 
