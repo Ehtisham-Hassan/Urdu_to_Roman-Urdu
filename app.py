@@ -11,7 +11,7 @@ from model import Seq2SeqModel, BPETokenizer
 REPO_ID = "ehtisham-hassan/urdu_to_roman-urdu"  # change to your repo name
 
 files_to_download = {
-    "best_model.pth": "final_model_weights.pth",
+    "final_model_weights.pth": "final_model_weights.pth",
     "src_tokenizer.pkl": "src_tokenizer.pkl",
     "tgt_tokenizer.pkl": "tgt_tokenizer.pkl",
 }
@@ -76,7 +76,7 @@ model = Seq2SeqModel(
     dropout=0.3
 ).to(device)
 
-model.load_state_dict(torch.load("best_model.pth", map_location=device))
+model.load_state_dict(torch.load("final_model_weights.pth", map_location=device))
 model.eval()
 
 # ==============================
